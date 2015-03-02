@@ -5,10 +5,30 @@
     <meta charset="utf-8" />
     <title>fractional-transform</title>
     <link rel="stylesheet" href="app.css" type="text/css" />
+    <style>
+        #src-container canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        #alpha-circle, #beta-circle {
+            cursor: move;
+        }
+        #src-container {
+            position: relative;
+            display: inline-block;
+            width: 500px;
+            height: 500px;
+        }
+    </style>
     <script src="app.js"></script>
 </head>
 <body>
-    <canvas id="canvas1" width="500" height="500"></canvas>
-    <canvas id="canvas2" width="500" height="500"></canvas>
+    <span id="src-container">
+        <canvas id="src-canvas" width="500" height="500"></canvas>
+        <canvas id="alpha-circle" width="10" height="10"></canvas>
+        <canvas id="beta-circle" width="10" height="10"></canvas>
+    </span>
+    <canvas id="dest-canvas" width="500" height="500"></canvas>
 </body>
 </html>
