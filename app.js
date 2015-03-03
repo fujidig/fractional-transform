@@ -37,7 +37,9 @@ function main(img) {
     var canvas2 = document.getElementById("dest-canvas");
     var circle1 = document.getElementById("alpha-circle");
     var circle2 = document.getElementById("beta-circle");
-    var w = 500, h = 500;
+    var w = 700, h = 700;
+    canvas1.parentElement.style.width = w + "px";
+    canvas1.parentElement.style.height = h + "px";
     var sw = w / 2, sh = h / 2;
     var imgCanvas = imgToCanvas(img, sw, sh);
     var src = imgCanvas.getContext("2d").getImageData(0, 0, sw, sh);
@@ -54,14 +56,6 @@ function main(img) {
     function update() {
         drawDest(canvas2, src, w, h, sw, sh, alpha, beta);
     }
-}
-
-function drawSrc(canvas, src, w, h, sw, sh, alpha, beta) {
-    canvas.width = w, canvas.height = h;
-    var ctx = canvas.getContext("2d");
-    ctx.translate(w / 2, h / 2);
-    ctx.drawImage(src, -sw / 2, -sh / 2);
-    drawAxis(ctx, w, h);
 }
 
 function drawCircle(canvas, color) {
@@ -116,6 +110,27 @@ function enableToDrag(circles, poses, container, w, h, update) {
     container.addEventListener("drop", drop, false);
 }
 
+function drawSrc(canvas, src, w, h, sw, sh, alpha, beta) {
+    canvas.width = w, canvas.height = h;
+    var ctx = canvas.getContext("2d");
+    var dest = ctx.createImageData(w, h);
+    var k = 10 / w;
+    for (var y = 0; y < h; y++) {
+        for (var x = 0; x < w; x++) {
+            var i = (y * w + x) * 4;
+            var xx = k * (x - w / 2), yy = k * (y - h / 2);
+            var color = getPixel(xx, yy);
+            dest.data[i] = color[0];
+            dest.data[i + 1] = color[1];
+            dest.data[i + 2] = color[2];
+            dest.data[i + 3] = color[3];
+        }
+    }
+    ctx.putImageData(dest, 0, 0);
+    ctx.translate(w / 2, h / 2);
+    //drawAxis(ctx, w, h);
+}
+
 function drawDest(canvas, src, w, h, sw, sh, alpha, beta) {
     canvas.width = w, canvas.height = h;
     var ctx = canvas.getContext("2d");
@@ -127,19 +142,34 @@ function drawDest(canvas, src, w, h, sw, sh, alpha, beta) {
             var xx = k * (x - w / 2), yy = k * (y - h / 2);
             var z = div(add(scale(alpha, -1), mul([xx, yy], beta)), [xx - 1, yy]);
             var pp = z[0], qq = z[1];
+
+            /*
             var p = pp + sw / 2, q = qq + sh / 2;
             if (0 <= p && p < sw && 0 <= q && q < sh) {
-                var j = (Math.floor(q) * sw + Math.floor(p)) * 4;
-                dest.data[i] = src.data[j];
-                dest.data[i + 1] = src.data[j + 1];
-                dest.data[i + 2] = src.data[j + 2];
-                dest.data[i + 3] = src.data[j + 3];
-            }
+            var j = (Math.floor(q) * sw + Math.floor(p)) * 4;
+            dest.data[i] = src.data[j];
+            dest.data[i + 1] = src.data[j + 1];
+            dest.data[i + 2] = src.data[j + 2];
+            dest.data[i + 3] = src.data[j + 3]
+            }*/
+            var color = getPixel(pp, qq);
+            dest.data[i] = color[0];
+            dest.data[i + 1] = color[1];
+            dest.data[i + 2] = color[2];
+            dest.data[i + 3] = color[3];
         }
     }
     ctx.putImageData(dest, 0, 0);
     ctx.translate(w / 2, h / 2);
-    drawAxis(ctx, w, h);
+    //drawAxis(ctx, w, h);
+}
+
+function getPixel(x, y) {
+    if ((((Math.floor(x) % 2) & 1) ^ ((Math.floor(y) % 2) & 1)) == 0) {
+        return [200, 200, 200, 255];
+    } else {
+        return [255, 255, 255, 255];
+    }
 }
 
 function drawAxis(ctx, w, h) {
@@ -149,10 +179,6 @@ function drawAxis(ctx, w, h) {
     ctx.moveTo(0, -w / 2);
     ctx.lineTo(0, w / 2);
     ctx.stroke();
-}
-
-function getPixel(canvas, x, y) {
-    return canvas.getContext("2d").getImageData(x, y, 1, 1);
 }
 
 function imgToCanvas(img, sw, sh) {
