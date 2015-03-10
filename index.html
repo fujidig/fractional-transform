@@ -1,12 +1,16 @@
 ﻿<!DOCTYPE html>
-
 <html lang="ja">
 <head>
     <meta charset="utf-8" />
     <title>fractional-transform</title>
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1.0">
     <link rel="stylesheet" href="app.css" type="text/css" />
     <style>
-        body { 
+        html, body, canvas {
+            margin: 0;
+            padding: 0;
+        }
+        body {
             background: url("expr.png") no-repeat;
         }
         #src-container canvas {
@@ -25,11 +29,11 @@
     <script src="app.js"></script>
 </head>
 <body>
-    <span id="src-container">
+    <div id="src-container">
         <canvas id="src-canvas" width="0" height="0"></canvas>
         <canvas id="alpha-circle" width="10" height="10"></canvas>
         <canvas id="beta-circle" width="10" height="10"></canvas>
-    </span>
+    </div>
     <canvas id="dest-canvas" width="0" height="0"></canvas>
 </body>
 </html>

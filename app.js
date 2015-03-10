@@ -37,10 +37,11 @@ function main(img) {
     var canvas2 = document.getElementById("dest-canvas");
     var circle1 = document.getElementById("alpha-circle");
     var circle2 = document.getElementById("beta-circle");
-    var w = 700, h = 700;
+    var w = window.innerWidth;
+    var h = Math.floor(window.innerHeight / 2);
     canvas1.parentElement.style.width = w + "px";
     canvas1.parentElement.style.height = h + "px";
-    var sw = w / 2, sh = h / 2;
+    var sw = Math.floor(w / 2), sh = Math.floor(h / 2);
     var imgCanvas = imgToCanvas(img, sw, sh);
     var src = imgCanvas.getContext("2d").getImageData(0, 0, sw, sh);
     var alpha = [100, 0];
