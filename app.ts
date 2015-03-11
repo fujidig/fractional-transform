@@ -46,7 +46,7 @@ function main(img) {
     var src = imgCanvas.getContext("2d").getImageData(0, 0, sw, sh);
     var alpha = [100, 0];
     var beta = [60, -60];
-    drawSrc(canvas1, imgCanvas, w, h, sw, sh, alpha, beta);
+    drawSrc(canvas1, src, w, h, sw, sh, alpha, beta);
     drawCircle(circle1, "#f12020");
     drawCircle(circle2, "#2071f1");
     moveCircle(circle1, w, h, alpha);
@@ -143,7 +143,7 @@ function drawSrc(canvas: HTMLCanvasElement, src, w, h, sw, sh, alpha, beta) {
         for (var x = 0; x < w; x++) {
             var i = (y * w + x) * 4;
             var xx = k * (x - w / 2), yy = k * (y - h / 2);
-            var color = getPixel(xx, yy);
+            var color = getPixel(src, sw, sh, xx, yy);
             dest.data[i] = color[0];
             dest.data[i + 1] = color[1];
             dest.data[i + 2] = color[2];
@@ -175,7 +175,7 @@ function drawDest(canvas, src, w, h, sw, sh, alpha, beta) {
                 dest.data[i + 2] = src.data[j + 2];
                 dest.data[i + 3] = src.data[j + 3]
             }*/
-            var color = getPixel(pp, qq);
+            var color = getPixel(src, sw, sh, pp, qq);
             dest.data[i] = color[0];
             dest.data[i + 1] = color[1];
             dest.data[i + 2] = color[2];
@@ -187,7 +187,13 @@ function drawDest(canvas, src, w, h, sw, sh, alpha, beta) {
     //drawAxis(ctx, w, h);
 }
 
-function getPixel(x, y) {
+function getPixel(src, sw, sh, x, y) {
+    var p = x + sw / 2, q = y + sh / 2;
+    if (0 <= p && p < sw && 0 <= q && q < sh) {
+        var j = (Math.floor(q) * sw + Math.floor(p)) * 4;
+        return [src.data[j], src.data[j + 1], src.data[j + 2], src.data[j + 3]];
+    }
+    return [0, 0, 0, 0];
     if ((((Math.floor(x) % 2) & 1) ^ ((Math.floor(y) % 2) & 1)) == 0) {
         return [200, 200, 200, 255];
     } else {
