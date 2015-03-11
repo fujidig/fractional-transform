@@ -63,7 +63,7 @@ function main(img) {
     });
     circle1.addEventListener("touchmove", function (e) {
         e.preventDefault();
-        var x = event.touches[0].pageX + offX, y = event.touches[0].pageY + offY;
+        var x = event.touches[0].pageX - offX, y = event.touches[0].pageY - offY;
         circle1.style.left = x + "px";
         circle1.style.top = y + "px";
         document.body.style.background = "yellow";
