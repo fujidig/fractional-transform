@@ -66,6 +66,9 @@ function main(img) {
         var x = event.touches[0].pageX - offX, y = event.touches[0].pageY - offY;
         circle1.style.left = x + "px";
         circle1.style.top = y + "px";
+        alpha[0] = x - w / 2;
+        alpha[1] = y - h / 2;
+        update();
         document.body.style.background = "yellow";
     });
     circle1.addEventListener("touchend", (e) => {
