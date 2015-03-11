@@ -52,13 +52,13 @@ function main(img) {
     moveCircle(circle1, w, h, alpha);
     moveCircle(circle2, w, h, beta);
     enableToDrag([circle1, circle2], [alpha, beta], circle1.parentNode, w, h, update);
-    canvas1.addEventListener("touchstart", (e) => {
+    circle1.addEventListener("touchstart", (e) => {
         document.body.style.background = "red";
     });
-    canvas1.addEventListener("touchmove", (e) => {
+    circle1.addEventListener("touchmove", (e) => {
         document.body.style.background = "yellow";
     });
-    canvas1.addEventListener("touchend", (e) => {
+    circle1.addEventListener("touchend", (e) => {
         document.body.style.background = "blue";
     });
     update();
@@ -70,10 +70,10 @@ function main(img) {
 
 function drawCircle(canvas: HTMLCanvasElement, color) {
     var ctx = canvas.getContext("2d");
-    var sz = canvas.width;
+    var sz = 20;
     ctx.fillStyle = color;
     ctx.beginPath();
-    ctx.arc(sz / 2, sz / 2, sz / 2, 0, 2 * Math.PI);
+    ctx.arc(canvas.width / 2, canvas.height / 2, sz, 0, 2 * Math.PI);
     ctx.fill();
 }
 
