@@ -37,8 +37,8 @@ function main(img) {
     var canvas2 = document.getElementById("dest-canvas");
     var circle1 = document.getElementById("alpha-circle");
     var circle2 = document.getElementById("beta-circle");
-    var w = window.innerWidth;
-    var h = Math.floor(window.innerHeight / 2);
+    var w, h;
+    w = h = Math.floor(window.innerHeight / 2);
     canvas1.parentElement.style.width = w + "px";
     canvas1.parentElement.style.height = h + "px";
     var sw = Math.floor(w / 2), sh = Math.floor(h / 2);
@@ -52,6 +52,15 @@ function main(img) {
     moveCircle(circle1, w, h, alpha);
     moveCircle(circle2, w, h, beta);
     enableToDrag([circle1, circle2], [alpha, beta], circle1.parentNode, w, h, update);
+    canvas1.addEventListener("touchstart", function (e) {
+        document.body.style.background = "red";
+    });
+    canvas1.addEventListener("touchmove", function (e) {
+        document.body.style.background = "yellow";
+    });
+    canvas1.addEventListener("touchend", function (e) {
+        document.body.style.background = "blue";
+    });
     update();
 
     function update() {
@@ -169,7 +178,7 @@ function getPixel(x, y) {
     if ((((Math.floor(x) % 2) & 1) ^ ((Math.floor(y) % 2) & 1)) == 0) {
         return [200, 200, 200, 255];
     } else {
-        return [255, 255, 255, 255];
+        return [255, 255, 255, 0];
     }
 }
 
