@@ -1,4 +1,10 @@
-﻿window.onload = function () {
+﻿var SRC_K = 10;
+var DEST_K = 10;
+var IMG_K = 5;
+
+var CHECKER = location.hash == "#checker";
+
+window.onload = function () {
     var img = new Image();
     img.src = "cat-618470_640.jpg";
     img.onload = main.bind(null, img);
@@ -31,9 +37,6 @@ function inv(x) {
 function div(x, y) {
     return mul(x, inv(y));
 }
-
-var SRC_K = 10;
-var DEST_K = 10;
 
 function main(img) {
     var canvas1 = document.getElementById("src-canvas");
@@ -77,7 +80,6 @@ function drawCircle(canvas, color) {
 function moveCircle(circle, w, h, pos) {
     circle.style.left = (pos[0] * (w / SRC_K) + w / 2 - circle.width / 2) + "px";
     circle.style.top = (pos[1] * (w / SRC_K) + h / 2 - circle.height / 2) + "px";
-    console.log(circle.style.top, circle.style.left);
 }
 
 function enableToDrag(circle, pos, w, h, update) {
@@ -119,43 +121,6 @@ function enableToDrag(circle, pos, w, h, update) {
     }
 }
 
-// ref: http://stackoverflow.com/questions/7278409/html5-drag-and-drop-to-move-a-div-anywhere-on-the-screen
-function enableToDrag2(circles, poses, container, w, h, update) {
-    var elem, pos, offX, offY;
-    function dragstart(p, event) {
-        elem = this;
-        pos = p;
-        event.dataTransfer.setData("text/plain", "");
-        var style = window.getComputedStyle(event.target, null);
-        offX = parseInt(style.getPropertyValue("left")) - event.clientX;
-        offY = parseInt(style.getPropertyValue("top")) - event.clientY;
-    }
-    function dragover(event) {
-        var x = event.clientX + offX, y = event.clientY + offY;
-        pos[0] = x - w / 2;
-        pos[1] = y - h / 2;
-        update();
-        elem.style.display = "none";
-        event.preventDefault();
-    }
-    function drop(event) {
-        var x = event.clientX + offX, y = event.clientY + offY;
-        pos[0] = x - w / 2;
-        pos[1] = y - h / 2;
-        update();
-        elem.style.display = "";
-        elem.style.left = x + "px";
-        elem.style.top = y + "px";
-        event.preventDefault();
-    }
-    circles.forEach(function (circle, i) {
-        circle.draggable = true;
-        circle.addEventListener("dragstart", dragstart.bind(circle, poses[i]), false);
-    });
-    container.addEventListener("dragover", dragover, false);
-    container.addEventListener("drop", drop, false);
-}
-
 function drawSrc(canvas, src, w, h, sw, sh, alpha, beta) {
     canvas.width = w, canvas.height = h;
     var ctx = canvas.getContext("2d");
@@ -174,7 +139,8 @@ function drawSrc(canvas, src, w, h, sw, sh, alpha, beta) {
     }
     ctx.putImageData(dest, 0, 0);
     ctx.translate(w / 2, h / 2);
-    //drawAxis(ctx, w, h);
+    if (!CHECKER)
+        drawAxis(ctx, w, h);
 }
 
 function drawDest(canvas, src, w, h, sw, sh, alpha, beta) {
@@ -188,16 +154,6 @@ function drawDest(canvas, src, w, h, sw, sh, alpha, beta) {
             var xx = k * (x - w / 2), yy = k * (y - h / 2);
             var z = div(add(scale(alpha, -1), mul([xx, yy], beta)), [xx - 1, yy]);
             var pp = z[0], qq = z[1];
-
-            /*
-            var p = pp + sw / 2, q = qq + sh / 2;
-            if (0 <= p && p < sw && 0 <= q && q < sh) {
-            var j = (Math.floor(q) * sw + Math.floor(p)) * 4;
-            dest.data[i] = src.data[j];
-            dest.data[i + 1] = src.data[j + 1];
-            dest.data[i + 2] = src.data[j + 2];
-            dest.data[i + 3] = src.data[j + 3]
-            }*/
             var color = getPixel(src, sw, sh, pp, qq);
             dest.data[i] = color[0];
             dest.data[i + 1] = color[1];
@@ -207,21 +163,24 @@ function drawDest(canvas, src, w, h, sw, sh, alpha, beta) {
     }
     ctx.putImageData(dest, 0, 0);
     ctx.translate(w / 2, h / 2);
-    //drawAxis(ctx, w, h);
+    if (!CHECKER)
+        drawAxis(ctx, w, h);
 }
 
 function getPixel(src, sw, sh, x, y) {
-    /*var p = x + sw / 2, q = y + sh / 2;
+    if (CHECKER) {
+        if ((((Math.floor(x) % 2) & 1) ^ ((Math.floor(y) % 2) & 1)) == 0) {
+            return [200, 200, 200, 255];
+        } else {
+            return [255, 255, 255, 0];
+        }
+    }
+    var p = (x / IMG_K + 0.5) * sw, q = (y / IMG_K + 0.5) * sh;
     if (0 <= p && p < sw && 0 <= q && q < sh) {
-    var j = (Math.floor(q) * sw + Math.floor(p)) * 4;
-    return [src.data[j], src.data[j + 1], src.data[j + 2], src.data[j + 3]];
+        var j = (Math.floor(q) * sw + Math.floor(p)) * 4;
+        return [src.data[j], src.data[j + 1], src.data[j + 2], src.data[j + 3]];
     }
-    return [0, 0, 0, 0];*/
-    if ((((Math.floor(x) % 2) & 1) ^ ((Math.floor(y) % 2) & 1)) == 0) {
-        return [200, 200, 200, 255];
-    } else {
-        return [255, 255, 255, 0];
-    }
+    return [0, 0, 0, 0];
 }
 
 function drawAxis(ctx, w, h) {
