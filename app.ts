@@ -82,27 +82,41 @@ function moveCircle(circle, w, h, pos) {
 
 function enableToDrag(circle, pos, w, h, update) {
     var offX, offY;
+    var dragging = false;
 
     circle.addEventListener("touchstart", (e: any) => {
         e.preventDefault();
         offX = e.touches[0].pageX - circle.offsetLeft;
         offY = e.touches[0].pageY - circle.offsetTop;
-        document.body.style.background = "red";
     });
     circle.addEventListener("touchmove", (e: any) => {
         e.preventDefault();
-        var x = e.touches[0].pageX - offX, y = e.touches[0].pageY - offY;
+        move(e.touches[0].pageX, e.touches[0].pageY);
+    });
+    circle.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        offX = e.clientX - circle.offsetLeft;
+        offY = e.clientY - circle.offsetTop;
+        dragging = true;
+    });
+    document.body.addEventListener("mousemove", (e) => {
+        if (dragging) {
+            move(e.clientX, e.clientY);
+        }
+    });
+    document.body.addEventListener("mouseup", (e) => {
+        e.preventDefault();
+        dragging = false;
+    });
+
+    function move(x, y) {
+        x -= offX, y -= offY;
         circle.style.left = x + "px";
         circle.style.top = y + "px";
         pos[0] = (x - w / 2) * (SRC_K / w);
         pos[1] = (y - h / 2) * (SRC_K / w);
         update();
-        document.body.style.background = "yellow";
-    });
-    circle.addEventListener("touchend", (e) => {
-        e.preventDefault();
-        document.body.style.background = "blue";
-    });
+    }
 }
 
 // ref: http://stackoverflow.com/questions/7278409/html5-drag-and-drop-to-move-a-div-anywhere-on-the-screen
