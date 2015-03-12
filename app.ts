@@ -32,6 +32,9 @@ function div(x, y) {
     return mul(x, inv(y));
 }
 
+var SRC_K = 10;
+var DEST_K = 10;
+
 function main(img) {
     var canvas1 = <HTMLCanvasElement>document.getElementById("src-canvas");
     var canvas2 = <HTMLCanvasElement>document.getElementById("dest-canvas");
@@ -44,8 +47,8 @@ function main(img) {
     var sw = Math.floor(w / 2), sh = Math.floor(h / 2);
     var imgCanvas = imgToCanvas(img, sw, sh);
     var src = imgCanvas.getContext("2d").getImageData(0, 0, sw, sh);
-    var alpha = [100, 0];
-    var beta = [60, -60];
+    var alpha = [1, 1];
+    var beta = [-2, 0];
     drawSrc(canvas1, src, w, h, sw, sh, alpha, beta);
     drawCircle(circle1, "#f12020");
     drawCircle(circle2, "#2071f1");
@@ -55,19 +58,19 @@ function main(img) {
 
     var offX, offY;
 
-    circle1.addEventListener("touchstart", (e) => {
+    circle1.addEventListener("touchstart", (e: any) => {
         e.preventDefault();
         offX = e.touches[0].pageX - circle1.offsetLeft;
         offY = e.touches[0].pageY - circle1.offsetTop;
         document.body.style.background = "red";
     });
-    circle1.addEventListener("touchmove", (e) => {
+    circle1.addEventListener("touchmove", (e: any) => {
         e.preventDefault();
-        var x = event.touches[0].pageX - offX, y = event.touches[0].pageY - offY;
+        var x = e.touches[0].pageX - offX, y = e.touches[0].pageY - offY;
         circle1.style.left = x + "px";
         circle1.style.top = y + "px";
-        alpha[0] = x - w / 2;
-        alpha[1] = y - h / 2;
+        alpha[0] = (x - w / 2) * (SRC_K / w);
+        alpha[1] = (y - h / 2) * (SRC_K / w);
         update();
         document.body.style.background = "yellow";
     });
@@ -92,8 +95,8 @@ function drawCircle(canvas: HTMLCanvasElement, color) {
 }
 
 function moveCircle(circle, w, h, pos) {
-    circle.style.left = (pos[0] + w / 2 - circle.width / 2) + "px";
-    circle.style.top = (pos[1] + h / 2 - circle.height / 2) + "px";
+    circle.style.left = (pos[0] * (w / SRC_K) + w / 2 - circle.width / 2) + "px";
+    circle.style.top = (pos[1] * (w / SRC_K) + h / 2 - circle.height / 2) + "px";
     console.log(circle.style.top, circle.style.left);
 }
 
@@ -138,7 +141,7 @@ function drawSrc(canvas: HTMLCanvasElement, src, w, h, sw, sh, alpha, beta) {
     canvas.width = w, canvas.height = h;
     var ctx = canvas.getContext("2d");
     var dest = ctx.createImageData(w, h);
-    var k = 10 / w;
+    var k = SRC_K / w;
     for (var y = 0; y < h; y++) {
         for (var x = 0; x < w; x++) {
             var i = (y * w + x) * 4;
@@ -159,7 +162,7 @@ function drawDest(canvas, src, w, h, sw, sh, alpha, beta) {
     canvas.width = w, canvas.height = h;
     var ctx = canvas.getContext("2d");
     var dest = ctx.createImageData(w, h);
-    var k = 10 / w;
+    var k = DEST_K / w;
     for (var y = 0; y < h; y++) {
         for (var x = 0; x < w; x++) {
             var i = (y * w + x) * 4;
@@ -188,12 +191,12 @@ function drawDest(canvas, src, w, h, sw, sh, alpha, beta) {
 }
 
 function getPixel(src, sw, sh, x, y) {
-    var p = x + sw / 2, q = y + sh / 2;
+    /*var p = x + sw / 2, q = y + sh / 2;
     if (0 <= p && p < sw && 0 <= q && q < sh) {
         var j = (Math.floor(q) * sw + Math.floor(p)) * 4;
         return [src.data[j], src.data[j + 1], src.data[j + 2], src.data[j + 3]];
     }
-    return [0, 0, 0, 0];
+    return [0, 0, 0, 0];*/
     if ((((Math.floor(x) % 2) & 1) ^ ((Math.floor(y) % 2) & 1)) == 0) {
         return [200, 200, 200, 255];
     } else {
