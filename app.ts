@@ -54,30 +54,10 @@ function main(img) {
     drawCircle(circle2, "#2071f1");
     moveCircle(circle1, w, h, alpha);
     moveCircle(circle2, w, h, beta);
-    enableToDrag([circle1, circle2], [alpha, beta], circle1.parentNode, w, h, update);
+    
+    enableToDrag(circle1, alpha, w, h, update);
+    enableToDrag(circle2, beta, w, h, update);
 
-    var offX, offY;
-
-    circle1.addEventListener("touchstart", (e: any) => {
-        e.preventDefault();
-        offX = e.touches[0].pageX - circle1.offsetLeft;
-        offY = e.touches[0].pageY - circle1.offsetTop;
-        document.body.style.background = "red";
-    });
-    circle1.addEventListener("touchmove", (e: any) => {
-        e.preventDefault();
-        var x = e.touches[0].pageX - offX, y = e.touches[0].pageY - offY;
-        circle1.style.left = x + "px";
-        circle1.style.top = y + "px";
-        alpha[0] = (x - w / 2) * (SRC_K / w);
-        alpha[1] = (y - h / 2) * (SRC_K / w);
-        update();
-        document.body.style.background = "yellow";
-    });
-    circle1.addEventListener("touchend", (e) => {
-        e.preventDefault();
-        document.body.style.background = "blue";
-    });
     update();
 
     function update() {
@@ -100,8 +80,33 @@ function moveCircle(circle, w, h, pos) {
     console.log(circle.style.top, circle.style.left);
 }
 
+function enableToDrag(circle, pos, w, h, update) {
+    var offX, offY;
+
+    circle.addEventListener("touchstart", (e: any) => {
+        e.preventDefault();
+        offX = e.touches[0].pageX - circle.offsetLeft;
+        offY = e.touches[0].pageY - circle.offsetTop;
+        document.body.style.background = "red";
+    });
+    circle.addEventListener("touchmove", (e: any) => {
+        e.preventDefault();
+        var x = e.touches[0].pageX - offX, y = e.touches[0].pageY - offY;
+        circle.style.left = x + "px";
+        circle.style.top = y + "px";
+        pos[0] = (x - w / 2) * (SRC_K / w);
+        pos[1] = (y - h / 2) * (SRC_K / w);
+        update();
+        document.body.style.background = "yellow";
+    });
+    circle.addEventListener("touchend", (e) => {
+        e.preventDefault();
+        document.body.style.background = "blue";
+    });
+}
+
 // ref: http://stackoverflow.com/questions/7278409/html5-drag-and-drop-to-move-a-div-anywhere-on-the-screen
-function enableToDrag(circles: Array<HTMLElement>, poses, container, w, h, update) {
+function enableToDrag2(circles: Array<HTMLElement>, poses, container, w, h, update) {
     var elem, pos, offX, offY;
     function dragstart(p, event) {
         elem = this;
