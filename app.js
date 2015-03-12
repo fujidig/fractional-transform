@@ -172,7 +172,7 @@ function getPixel(src, sw, sh, x, y) {
         if ((((Math.floor(x) % 2) & 1) ^ ((Math.floor(y) % 2) & 1)) == 0) {
             return [200, 200, 200, 255];
         } else {
-            return [255, 255, 255, 0];
+            return [255, 255, 255, 255];
         }
     }
     var p = (x / IMG_K + 0.5) * sw, q = (y / IMG_K + 0.5) * sh;
