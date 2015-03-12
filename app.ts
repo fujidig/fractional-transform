@@ -95,6 +95,9 @@ function enableToDrag(circle, pos, w, h, update) {
         e.preventDefault();
         move(e.touches[0].pageX, e.touches[0].pageY);
     });
+    circle.addEventListener("touchup", (e: any) => {
+        e.preventDefault();
+    });
     circle.addEventListener("mousedown", (e) => {
         e.preventDefault();
         offX = e.clientX - circle.offsetLeft;
